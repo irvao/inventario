@@ -390,6 +390,22 @@ function chamar(params, tempoLimite = 30000){
   });
 }
 
+/** Google as vezes engasga (script frio, instabilidade, limite de uso).
+ *  Em vez de jogar o erro na cara na primeira falha, tenta de novo. */
+function espera(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function chamarComRetentativa(params, tempoLimite, tentativas = 3){
+  let ultimoErro;
+  for (let i = 0; i < tentativas; i++){
+    try { return await chamar(params, tempoLimite); }
+    catch (err){
+      ultimoErro = err;
+      if (i < tentativas - 1) await espera(800 * (i + 1));
+    }
+  }
+  throw ultimoErro;
+}
+
 /* ==================================================================
    3. Categorias automáticas por palavra-chave (vale a 1a regra que casar)
    ================================================================== */
@@ -443,8 +459,12 @@ async function entrar(){
   const senha = elSenha.value.trim();
   if (!senha) return;
   elEntrar.disabled = true; elEntrar.textContent = 'Verificando...'; elErro.textContent = '';
+  const avisoLento = setTimeout(() => {
+    elErro.textContent = 'O servidor está demorando. Aguarde mais um pouco...';
+  }, 12000);
   try{
-    const r = await chamar({ pw: senha });
+    const r = await chamarComRetentativa({ pw: senha }, 45000, 3);
+    clearTimeout(avisoLento); elErro.textContent = '';
     if (!r || !r.ok){
       elErro.textContent = (r && r.erro === 'senha') ? 'Senha incorreta.' : 'Não consegui carregar. Tente de novo.';
       elEntrar.disabled = false; elEntrar.textContent = 'Entrar';
@@ -456,7 +476,10 @@ async function entrar(){
     document.getElementById('painel').style.display = 'block';
     iniciarPainel();
   }catch(err){
-    elErro.textContent = 'Sem resposta do servidor. Confira sua internet.';
+    clearTimeout(avisoLento);
+    elErro.textContent = (err && err.message === 'tempo')
+      ? 'O servidor do Google demorou demais. Tente de novo em alguns segundos.'
+      : 'O servidor do Google não respondeu. Pode ser instabilidade ou o limite diário de uso. Tente de novo em alguns minutos.';
     elEntrar.disabled = false; elEntrar.textContent = 'Entrar';
   }
 }
@@ -691,7 +714,7 @@ function agendarFoto(el){
 function puxarFila(){
   while (emAndamento < LIMITE && fila.length){
     const t = fila.shift(); emAndamento++;
-    chamar({ pw:SENHA_OK, img:t.nome }, 25000)
+    chamarComRetentativa({ pw:SENHA_OK, img:t.nome }, 25000, 2)
       .then(r=>{ const d=(r&&r.ok&&r.img)?r.img:''; cacheFotos.set(t.nome,d); pintarFoto(t.el,d); })
       .catch(()=>pintarFoto(t.el,''))
       .finally(()=>{ emAndamento--; puxarFila(); });
@@ -713,7 +736,7 @@ const elCaixaDetalhe = document.getElementById('caixaDetalhe');
 function abrirDetalhe(i){
   const foto = cacheFotos.get(i.foto);
   if (i.foto && !foto){
-    chamar({ pw:SENHA_OK, img:i.foto }, 25000).then(r=>{
+    chamarComRetentativa({ pw:SENHA_OK, img:i.foto }, 25000, 2).then(r=>{
       const d = (r&&r.ok&&r.img)?r.img:'';
       cacheFotos.set(i.foto, d);
       if (d && elDetalhe.classList.contains('aberto') && !elCaixaDetalhe.querySelector('img')){
