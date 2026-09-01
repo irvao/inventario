@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Inventário de Casa</title>
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --surface:#ffffff;
+    --surface-2:#eef1f5;
+    --line:#dde2e9;
+    --text:#1a1f27;
+    --muted:#69727f;
+    --accent:#2563eb;
+    --accent-soft:#e6edfd;
+    --shadow:0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+    --radius:12px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1319;
+      --surface:#161b23;
+      --surface-2:#1e242e;
+      --line:#2a323d;
+      --text:#e8ecf1;
+      --muted:#98a2b1;
+      --accent:#5b8dff;
+      --accent-soft:#1c2942;
+      --shadow:none;
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font:inherit;cursor:pointer}
+  input,select{font:inherit;color:inherit}
+
+  /* ---------- tela de senha ---------- */
+  #portao{
+    min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .cartao-senha{
+    width:100%; max-width:360px; background:var(--surface); border:1px solid var(--line);
+    border-radius:16px; padding:32px 28px; box-shadow:var(--shadow); text-align:center;
+  }
+  .cadeado{
+    width:44px;height:44px;margin:0 auto 16px;border-radius:12px;background:var(--accent-soft);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cadeado svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round}
+  .cartao-senha h1{font-size:19px;margin:0 0 6px;font-weight:650;letter-spacing:-.01em}
+  .cartao-senha p{margin:0 0 22px;color:var(--muted);font-size:13.5px}
+  .campo{
+    width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
+    background:var(--bg);outline:none;
+  }
+  .campo:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .botao{
+    width:100%;margin-top:10px;padding:11px;border:0;border-radius:10px;
+    background:var(--accent);color:#fff;font-weight:600;
+  }
+  .botao:disabled{opacity:.6;cursor:default}
+  .erro{margin-top:14px;color:#d94848;font-size:13.5px;min-height:20px}
+
+  /* ---------- cabeçalho ---------- */
+  #painel{display:none}
+  header{
+    position:sticky;top:0;z-index:20;background:var(--surface);
+    border-bottom:1px solid var(--line);padding:14px 16px 12px;
+  }
+  .topo{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .topo h1{font-size:17px;margin:0;font-weight:650;letter-spacing:-.01em}
+  .topo .resumo{color:var(--muted);font-size:13px}
+  .busca-caixa{position:relative}
+  .busca-caixa svg{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;
+    stroke-linecap:round;pointer-events:none;
+  }
+  #busca{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--line);
+    border-radius:10px;background:var(--bg);outline:none}
+  #busca:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .filtros{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .filtros select{
+    padding:7px 10px;border:1px solid var(--line);border-radius:9px;
+    background:var(--surface);max-width:48%;
+  }
+  .chips{display:flex;gap:7px;overflow-x:auto;margin-top:10px;padding-bottom:2px;
+    scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{
+    flex:0 0 auto;padding:6px 11px;border:1px solid var(--line);border-radius:999px;
+    background:var(--surface);color:var(--muted);font-size:13px;white-space:nowrap;
+  }
+  .chip .n{opacity:.65;margin-left:5px;font-variant-numeric:tabular-nums}
+  .chip[aria-pressed="true"]{
+    background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600;
+  }
+
+  /* ---------- lista ---------- */
+  main{padding:16px;max-width:1100px;margin:0 auto}
+  .contagem{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .grade{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  .item{
+    display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:10px;box-shadow:var(--shadow);
+    text-align:left;width:100%;
+  }
+  .miniatura{
+    flex:0 0 62px;width:62px;height:62px;border-radius:9px;overflow:hidden;
+    background:var(--surface-2);display:flex;align-items:center;justify-content:center;
+  }
+  .miniatura img{width:100%;height:100%;object-fit:cover;display:block}
+  .miniatura .vazio{font-size:10px;color:var(--muted)}
+  .item .corpo{min-width:0;flex:1}
+  .item .nome{font-weight:600;font-size:14px;line-height:1.35;margin-bottom:5px;
+    overflow-wrap:anywhere}
+  .tags{display:flex;gap:5px;flex-wrap:wrap}
+  .tag{
+    font-size:11.5px;padding:2px 7px;border-radius:6px;background:var(--surface-2);
+    color:var(--muted);white-space:nowrap;
+  }
+  .tag.destaque{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .tag.retirado{background:#fde8e8;color:#b42318}
+  @media (prefers-color-scheme: dark){ .tag.retirado{background:#3a1d1d;color:#f5a3a3} }
+  .vazio-geral{text-align:center;color:var(--muted);padding:48px 16px}
+
+  /* ---------- detalhe ---------- */
+  #detalhe{
+    position:fixed;inset:0;z-index:40;background:rgba(10,14,20,.55);
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  #detalhe.aberto{display:flex}
+  .caixa-detalhe{
+    background:var(--surface);border-radius:16px;max-width:420px;width:100%;
+    max-height:86dvh;overflow:auto;padding:20px;
+  }
+  .caixa-detalhe img{width:100%;border-radius:12px;background:var(--surface-2);margin-bottom:14px}
+  .caixa-detalhe h2{font-size:17px;margin:0 0 10px;font-weight:650}
+  .linha-info{display:flex;justify-content:space-between;gap:12px;padding:8px 0;
+    border-top:1px solid var(--line);font-size:14px}
+  .linha-info span:first-child{color:var(--muted)}
+  .fechar{margin-top:16px;width:100%;padding:10px;border:1px solid var(--line);
+    border-radius:10px;background:var(--surface-2);color:var(--text);font-weight:600}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:24px 16px 32px}
+</style>
+</head>
+<body>
+
+<div id="portao">
+  <div class="cartao-senha">
+    <div class="cadeado">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    </div>
+    <h1>Inventário de Casa</h1>
+    <p>Digite a senha para consultar.</p>
+    <input id="senha" class="campo" type="password" autocomplete="off" placeholder="Senha">
+    <button id="entrar" class="botao">Entrar</button>
+    <div class="erro" id="erro"></div>
+  </div>
+</div>
+
+<div id="painel">
+  <header>
+    <div class="topo">
+      <h1>Inventário de Casa</h1>
+      <span class="resumo" id="resumo"></span>
+    </div>
+    <div class="busca-caixa">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="busca" type="search" placeholder="Buscar item, caixa ou local..." autocomplete="off">
+    </div>
+    <div class="filtros">
+      <select id="filtroLocal"></select>
+      <select id="filtroCaixa"></select>
+    </div>
+    <div class="chips" id="chips"></div>
+  </header>
+  <main>
+    <div class="contagem" id="contagem"></div>
+    <div class="grade" id="grade"></div>
+  </main>
+  <footer>Consulta somente leitura. Os cadastros continuam no AppSheet.</footer>
+</div>
+
+<div id="detalhe"><div class="caixa-detalhe" id="caixaDetalhe"></div></div>
+
+<script>
+/* ==================================================================
+   1. Endereço da ponte (Apps Script). Trocar aqui se republicar.
+   ================================================================== */
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzHxL4ukcby5aCeM7DzA_5JvJpt4u7RWNAoM0LjA93LMmtYHQi8qAaWAwUVDounEiXj/exec';
+
+/* ==================================================================
+   2. Conversa com a ponte, via JSONP (funciona sem servidor nenhum)
+   ================================================================== */
+let contadorChamada = 0;
+function chamar(params, tempoLimite = 30000){
+  return new Promise((resolve, reject) => {
+    const nomeCb = '__inv_cb_' + (++contadorChamada);
+    const script = document.createElement('script');
+    const relogio = setTimeout(() => { limpar(); reject(new Error('tempo')); }, tempoLimite);
+    function limpar(){
+      clearTimeout(relogio);
+      try { delete window[nomeCb]; } catch(e){ window[nomeCb] = undefined; }
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[nomeCb] = dados => { limpar(); resolve(dados); };
+    script.onerror = () => { limpar(); reject(new Error('rede')); };
+    const qs = new URLSearchParams(Object.assign({}, params, { callback: nomeCb }));
+    script.src = URL_SCRIPT + '?' + qs.toString();
+    document.body.appendChild(script);
+  });
+}
+
+/* ==================================================================
+   3. Categorias automáticas por palavra-chave
+   A ordem importa: vale a primeira regra que casar.
+   ================================================================== */
+const REGRAS = [
+  ['Games',              /playstation|\bps2\b|\bps4\b|master system|mega drive|xbox|kinect|videogame|nintendo|joystick|hotas|simulador (de )?(voo|aviao)|fidget|ioio|yoyo|meta quest|\bvr\b/],
+  ['Armas e munição',    /coldre|municao|municoes|rapid loader|porta carregador|prensa de muni|trava cadeado|sig ?sauer|taurus|pt59|p320|airsoft|cinto tatico/],
+  ['Automotivo e moto',  /civic|bmw|320i|maverick|gsx|honda|suzuki|pastilha|vela(s)? usada|bicos|biscos|retrovisor|farol|seta |sonda|wideband|fusivel|chupeta|capacete|moto\b|veicular|automotivo|placa de carro|triangulo carro|chave de roda|cardo|lambda|caçamba|cacamba/],
+  ['Áudio, foto e TI',   /hdmi|usb|roteador|mouse|teclado|chromecast|raspberry|controle|microfone|fone de ouvido|camera|scanner|ring light|tripe|lente|displayport|cabo de rede|impressora|monitor|pen ?drive|antena|jammer|wideband|starlink|bluetooth|gps/],
+  ['Iluminação',         /lampada|spot|refletor|arandela|\bluz\b|lanterna|\bled\b|luminaria/],
+  ['Cabos e energia',    /cabo|fio |fio,|fios|fonte|extensao|extençao|plugue|tomada|adaptador|carregador|bateria|pilha|interruptor|rele|terminal|conduite|coaxial|eletrico|garra jacare|energia|termo ?retratil|termoretratil|espaguete/],
+  ['Fixadores',          /parafuso|porca|arruela|bucha|prego|abracadeira|abraçadeira|ilho|grampo|rebite|gancho|soberbo|presilha|mao francesa|mão francesa|suporte prateleira/],
+  ['Ferramentas',        /alicate|chave|serra|broca|estilete|tesoura|paquimetro|fita metrica|\blima\b|afiador|afiacao|rebolo|solda|estanho|pinca|pinça|morsa|grampeador|espatula|prensa|guilhotina|medidor|transferidor|\bbit\b|bits|martelo|furadeira|pedra de afiar|matrizes|guia de/],
+  ['Papelaria',          /caneta|lapis|papel|borracha|boracha|post ?it|prancheta|caderno|\bcola\b|cola |giz|apontador|bloco de nota|calculadora|etiqueta|cracha|crachá|montblanc|computador de voo/],
+  ['Música',             /guitarra|ukulele|gaita|baqueta|pedaleira|capotraste|escaleta|pianica|instrumento|porta ?facas? tecido/],
+  ['Costura e couro',    /costura|agulha|linha |linhas|alfinete|tecido|couro|bainha|barbante|\bbotao\b|puxador de couro/],
+  ['Casa e jardim',      /jardinagem|mangueira|torneira|irrigacao|irrigação|cupim|espuma|manta|adesivo|silicone|puxador|rodizio|trinco|fechadura|vedacao|oring|o-ring|engate|filtro|tapete|almofada|mascara|raquete|enxofre|arame|horta|volacha|madeira|pincel|tinta/]
+];
+function normalizar(t){
+  return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function categoriaDe(item){
+  const texto = normalizar(item.item + ' ' + item.obs);
+  for (const [nome, re] of REGRAS){ if (re.test(texto)) return nome; }
+  return 'Outros';
+}
+
+/* ==================================================================
+   4. Estado
+   ================================================================== */
+let SENHA_OK = '';
+let ITENS = [];
+let categoriaAtiva = 'Todas';
+
+/* ==================================================================
+   5. Login
+   ================================================================== */
+const elSenha  = document.getElementById('senha');
+const elEntrar = document.getElementById('entrar');
+const elErro   = document.getElementById('erro');
+
+elEntrar.addEventListener('click', entrar);
+elSenha.addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); });
+
+async function entrar(){
+  const senha = elSenha.value.trim();
+  if (!senha) return;
+  elEntrar.disabled = true;
+  elEntrar.textContent = 'Verificando...';
+  elErro.textContent = '';
+  try{
+    const r = await chamar({ pw: senha });
+    if (!r || !r.ok){
+      elErro.textContent = (r && r.erro === 'senha')
+        ? 'Senha incorreta.'
+        : 'Não consegui carregar. Tente de novo.';
+      elEntrar.disabled = false;
+      elEntrar.textContent = 'Entrar';
+      return;
+    }
+    SENHA_OK = senha;
+    ITENS = (r.itens || []).map(it => Object.assign({}, it, { categoria: categoriaDe(it) }));
+    document.getElementById('portao').style.display = 'none';
+    document.getElementById('painel').style.display = 'block';
+    iniciarPainel();
+  }catch(err){
+    elErro.textContent = 'Sem resposta do servidor. Confira sua internet.';
+    elEntrar.disabled = false;
+    elEntrar.textContent = 'Entrar';
+  }
+}
+
+/* ==================================================================
+   6. Painel
+   ================================================================== */
+const elBusca    = document.getElementById('busca');
+const elLocal    = document.getElementById('filtroLocal');
+const elCaixa    = document.getElementById('filtroCaixa');
+const elChips    = document.getElementById('chips');
+const elGrade    = document.getElementById('grade');
+const elContagem = document.getElementById('contagem');
+const elResumo   = document.getElementById('resumo');
+
+function ordenarCaixas(a, b){
+  const na = parseInt(String(a).replace(/\D/g,''), 10);
+  const nb = parseInt(String(b).replace(/\D/g,''), 10);
+  if (!isNaN(na) && !isNaN(nb) && na !== nb) return na - nb;
+  return String(a).localeCompare(String(b), 'pt-BR');
+}
+
+function iniciarPainel(){
+  const locais = [...new Set(ITENS.map(i => i.local).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const caixas = [...new Set(ITENS.map(i => i.caixa).filter(Boolean))].sort(ordenarCaixas);
+
+  elResumo.textContent = ITENS.length + ' itens · ' + caixas.length + ' caixas · ' + locais.length + ' locais';
+
+  elLocal.innerHTML = '<option value="">Todos os locais</option>' +
+    locais.map(l => '<option>' + escapar(l) + '</option>').join('');
+  elCaixa.innerHTML = '<option value="">Todas as caixas</option>' +
+    caixas.map(c => '<option>' + escapar(c) + '</option>').join('');
+
+  montarChips();
+  [elBusca, elLocal, elCaixa].forEach(el => el.addEventListener('input', desenhar));
+  desenhar();
+}
+
+function montarChips(){
+  const contagens = {};
+  ITENS.forEach(i => { contagens[i.categoria] = (contagens[i.categoria] || 0) + 1; });
+  const ordenadas = Object.keys(contagens).sort((a,b) => contagens[b] - contagens[a]);
+  const lista = ['Todas', ...ordenadas];
+
+  elChips.innerHTML = lista.map(nome => {
+    const n = nome === 'Todas' ? ITENS.length : contagens[nome];
+    const ativo = nome === categoriaAtiva;
+    return '<button class="chip" aria-pressed="' + ativo + '" data-cat="' + escapar(nome) + '">' +
+           escapar(nome) + '<span class="n">' + n + '</span></button>';
+  }).join('');
+
+  elChips.querySelectorAll('.chip').forEach(b => {
+    b.addEventListener('click', () => {
+      categoriaAtiva = b.dataset.cat;
+      elChips.querySelectorAll('.chip').forEach(o =>
+        o.setAttribute('aria-pressed', String(o.dataset.cat === categoriaAtiva)));
+      desenhar();
+    });
+  });
+}
+
+function filtrar(){
+  const termo  = normalizar(elBusca.value.trim());
+  const termos = termo ? termo.split(/\s+/) : [];
+  const local  = elLocal.value;
+  const caixa  = elCaixa.value;
+
+  return ITENS.filter(i => {
+    if (categoriaAtiva !== 'Todas' && i.categoria !== categoriaAtiva) return false;
+    if (local && i.local !== local) return false;
+    if (caixa && i.caixa !== caixa) return false;
+    if (!termos.length) return true;
+    const alvo = normalizar([i.item, i.obs, i.caixa, i.local, i.id, i.categoria].join(' '));
+    return termos.every(t => alvo.includes(t));
+  });
+}
+
+function desenhar(){
+  const lista = filtrar();
+  elContagem.textContent = lista.length === ITENS.length
+    ? 'Mostrando todos os ' + lista.length + ' itens'
+    : 'Mostrando ' + lista.length + ' de ' + ITENS.length + ' itens';
+
+  if (!lista.length){
+    elGrade.innerHTML = '<div class="vazio-geral">Nada encontrado com esses filtros.</div>';
+    return;
+  }
+
+  elGrade.innerHTML = lista.map((i, pos) => {
+    const idx = ITENS.indexOf(i);
+    const retirado = normalizar(i.status) === 'retirado';
+    return '' +
+      '<button class="item" data-idx="' + idx + '">' +
+        '<div class="miniatura" data-foto="' + escapar(i.foto) + '">' +
+          (i.foto ? '' : '<span class="vazio">sem foto</span>') +
+        '</div>' +
+        '<div class="corpo">' +
+          '<div class="nome">' + escapar(i.item) + '</div>' +
+          '<div class="tags">' +
+            '<span class="tag destaque">' + escapar(i.caixa || 'sem caixa') + '</span>' +
+            '<span class="tag">' + escapar(i.local) + '</span>' +
+            (retirado ? '<span class="tag retirado">retirado</span>' : '') +
+          '</div>' +
+        '</div>' +
+      '</button>';
+  }).join('');
+
+  elGrade.querySelectorAll('.item').forEach(el => {
+    el.addEventListener('click', () => abrirDetalhe(ITENS[+el.dataset.idx]));
+  });
+  observarFotos();
+}
+
+/* ==================================================================
+   7. Fotos: carregam só quando aparecem na tela, poucas por vez
+   ================================================================== */
+const cacheFotos = new Map();
+const fila = [];
+let emAndamento = 0;
+const LIMITE = 4;
+
+let observador = null;
+function observarFotos(){
+  if (observador) observador.disconnect();
+  observador = new IntersectionObserver(entradas => {
+    entradas.forEach(e => {
+      if (!e.isIntersecting) return;
+      observador.unobserve(e.target);
+      agendarFoto(e.target);
+    });
+  }, { rootMargin: '250px' });
+  elGrade.querySelectorAll('.miniatura[data-foto]').forEach(el => {
+    if (el.dataset.foto) observador.observe(el);
+  });
+}
+
+function agendarFoto(el){
+  const nome = el.dataset.foto;
+  if (!nome) return;
+  if (cacheFotos.has(nome)) return pintarFoto(el, cacheFotos.get(nome));
+  fila.push({ el, nome });
+  puxarFila();
+}
+
+function puxarFila(){
+  while (emAndamento < LIMITE && fila.length){
+    const tarefa = fila.shift();
+    emAndamento++;
+    chamar({ pw: SENHA_OK, img: tarefa.nome }, 25000)
+      .then(r => {
+        const dados = (r && r.ok && r.img) ? r.img : '';
+        cacheFotos.set(tarefa.nome, dados);
+        pintarFoto(tarefa.el, dados);
+      })
+      .catch(() => { pintarFoto(tarefa.el, ''); })
+      .finally(() => { emAndamento--; puxarFila(); });
+  }
+}
+
+function pintarFoto(el, dados){
+  if (!el || !el.isConnected) return;
+  if (!dados){ el.innerHTML = '<span class="vazio">sem foto</span>'; return; }
+  const img = new Image();
+  img.src = dados;
+  img.alt = '';
+  el.innerHTML = '';
+  el.appendChild(img);
+}
+
+/* ==================================================================
+   8. Detalhe do item
+   ================================================================== */
+const elDetalhe = document.getElementById('detalhe');
+const elCaixaDetalhe = document.getElementById('caixaDetalhe');
+
+function abrirDetalhe(i){
+  const foto = cacheFotos.get(i.foto);
+
+  // Se a foto ainda nao tinha sido carregada, busca agora.
+  if (i.foto && !foto){
+    chamar({ pw: SENHA_OK, img: i.foto }, 25000).then(r => {
+      const dados = (r && r.ok && r.img) ? r.img : '';
+      cacheFotos.set(i.foto, dados);
+      if (dados && elDetalhe.classList.contains('aberto') && !elCaixaDetalhe.querySelector('img')){
+        const img = new Image();
+        img.src = dados;
+        elCaixaDetalhe.insertBefore(img, elCaixaDetalhe.firstChild);
+      }
+    }).catch(() => {});
+  }
+
+  elCaixaDetalhe.innerHTML =
+    (foto ? '<img src="' + foto + '" alt="">' : '') +
+    '<h2>' + escapar(i.item) + '</h2>' +
+    linha('Caixa', i.caixa) +
+    linha('Local', i.local) +
+    linha('Categoria', i.categoria) +
+    linha('Código', i.id) +
+    (i.obs ? linha('Observação', i.obs) : '') +
+    linha('Status', i.status || '-') +
+    '<button class="fechar" id="btFechar">Fechar</button>';
+  elDetalhe.classList.add('aberto');
+  document.getElementById('btFechar').addEventListener('click', fecharDetalhe);
+}
+function linha(rotulo, valor){
+  return '<div class="linha-info"><span>' + rotulo + '</span><span>' + escapar(valor || '-') + '</span></div>';
+}
+function fecharDetalhe(){ elDetalhe.classList.remove('aberto'); }
+elDetalhe.addEventListener('click', e => { if (e.target === elDetalhe) fecharDetalhe(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDetalhe(); });
+
+/* ---------- utilidade ---------- */
+function escapar(t){
+  return String(t == null ? '' : t)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>
