@@ -4,163 +4,286 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Inventário de Casa</title>
+<title>Inventário Casa Irving</title>
 <style>
   :root{
-    --bg:#f6f7f9;
-    --surface:#ffffff;
-    --surface-2:#eef1f5;
-    --line:#dde2e9;
-    --text:#1a1f27;
-    --muted:#69727f;
-    --accent:#2563eb;
-    --accent-soft:#e6edfd;
-    --shadow:0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
-    --radius:12px;
+    color-scheme: light;
+    --bg:#f4f4f2;
+    --surface:#fcfcfb;
+    --surface-2:#eeeeea;
+    --line:#e0e0da;
+    --line-strong:#cfcfc7;
+    --text:#0b0b0b;
+    --text-2:#52514e;
+    --muted:#83837c;
+    --accent:#2a78d6;
+    --accent-2:#1c5cab;
+    --accent-soft:#e6eefb;
+    --shadow-sm:0 1px 2px rgba(16,20,24,.05);
+    --shadow:0 1px 3px rgba(16,20,24,.07), 0 8px 24px -12px rgba(16,20,24,.16);
+    --r:14px;
+
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+    --s4:#eda100; --s5:#e87ba4; --s6:#008300;
+
+    --rubro:#b42318;
+    --rubro-tinta:#fdeceb;
+    --rubro-borda:#f0bcb8;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0f1319;
-      --surface:#161b23;
-      --surface-2:#1e242e;
-      --line:#2a323d;
-      --text:#e8ecf1;
-      --muted:#98a2b1;
-      --accent:#5b8dff;
-      --accent-soft:#1c2942;
+      color-scheme: dark;
+      --bg:#111110;
+      --surface:#1a1a19;
+      --surface-2:#242423;
+      --line:#302f2d;
+      --line-strong:#3d3c39;
+      --text:#ffffff;
+      --text-2:#c3c2b7;
+      --muted:#8e8d84;
+      --accent:#3987e5;
+      --accent-2:#6da7ec;
+      --accent-soft:#17263a;
+      --shadow-sm:none;
       --shadow:none;
+
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+      --s4:#c98500; --s5:#d55181; --s6:#008300;
+
+      --rubro:#f19d97;
+      --rubro-tinta:#2a1614;
+      --rubro-borda:#5a2b26;
     }
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
     background:var(--bg); color:var(--text);
-    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  button{font:inherit;cursor:pointer}
+  button{font:inherit;color:inherit;cursor:pointer}
   input,select{font:inherit;color:inherit}
+  ::placeholder{color:var(--muted)}
 
-  /* ---------- tela de senha ---------- */
-  #portao{
-    min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px;
-  }
-  .cartao-senha{
-    width:100%; max-width:360px; background:var(--surface); border:1px solid var(--line);
-    border-radius:16px; padding:32px 28px; box-shadow:var(--shadow); text-align:center;
-  }
-  .cadeado{
-    width:44px;height:44px;margin:0 auto 16px;border-radius:12px;background:var(--accent-soft);
+  /* ================= marca ================= */
+  .marca{display:flex;align-items:center;gap:11px}
+  .marca .selo{
+    width:38px;height:38px;border-radius:11px;flex:0 0 38px;
+    background:linear-gradient(145deg,var(--accent) 0%,var(--accent-2) 100%);
     display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px -2px rgba(42,120,214,.5);
   }
-  .cadeado svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:2;
-    stroke-linecap:round;stroke-linejoin:round}
-  .cartao-senha h1{font-size:19px;margin:0 0 6px;font-weight:650;letter-spacing:-.01em}
-  .cartao-senha p{margin:0 0 22px;color:var(--muted);font-size:13.5px}
+  .marca .selo svg{width:21px;height:21px}
+  .marca .nome{font-size:15.5px;font-weight:680;letter-spacing:-.015em;line-height:1.15}
+  .marca .sub{font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+
+  /* ================= senha ================= */
+  #portao{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .cartao-senha{
+    width:100%;max-width:372px;background:var(--surface);border:1px solid var(--line);
+    border-radius:20px;padding:34px 30px 30px;box-shadow:var(--shadow);
+  }
+  .cartao-senha .marca{justify-content:center;margin-bottom:22px}
+  .cartao-senha h1{font-size:18px;margin:0 0 5px;font-weight:660;letter-spacing:-.015em;text-align:center}
+  .cartao-senha p{margin:0 0 22px;color:var(--muted);font-size:13.5px;text-align:center}
   .campo{
-    width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
-    background:var(--bg);outline:none;
+    width:100%;padding:12px 14px;border:1px solid var(--line-strong);border-radius:11px;
+    background:var(--bg);outline:none;transition:border-color .15s,box-shadow .15s;
   }
   .campo:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
   .botao{
-    width:100%;margin-top:10px;padding:11px;border:0;border-radius:10px;
-    background:var(--accent);color:#fff;font-weight:600;
+    width:100%;margin-top:10px;padding:12px;border:0;border-radius:11px;
+    background:var(--accent);color:#fff;font-weight:620;letter-spacing:.01em;
+    transition:filter .15s;
   }
-  .botao:disabled{opacity:.6;cursor:default}
-  .erro{margin-top:14px;color:#d94848;font-size:13.5px;min-height:20px}
+  .botao:hover{filter:brightness(1.06)}
+  .botao:disabled{opacity:.55;cursor:default}
+  .erro{margin-top:13px;color:#d94848;font-size:13.5px;min-height:20px;text-align:center}
 
-  /* ---------- cabeçalho ---------- */
+  /* ================= topo ================= */
   #painel{display:none}
   header{
-    position:sticky;top:0;z-index:20;background:var(--surface);
-    border-bottom:1px solid var(--line);padding:14px 16px 12px;
+    position:sticky;top:0;z-index:30;background:var(--surface);
+    border-bottom:1px solid var(--line);
   }
-  .topo{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-  .topo h1{font-size:17px;margin:0;font-weight:650;letter-spacing:-.01em}
-  .topo .resumo{color:var(--muted);font-size:13px}
+  .faixa{
+    max-width:1180px;margin:0 auto;padding:13px 18px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .abas{display:flex;gap:3px;background:var(--surface-2);padding:3px;border-radius:11px}
+  .aba{
+    border:0;background:transparent;padding:7px 15px;border-radius:8px;
+    font-size:13.5px;font-weight:560;color:var(--text-2);transition:background .15s,color .15s;
+  }
+  .aba[aria-selected="true"]{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm);font-weight:640}
+
+  .barra-ferramentas{max-width:1180px;margin:0 auto;padding:0 18px 13px}
   .busca-caixa{position:relative}
   .busca-caixa svg{
-    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    position:absolute;left:13px;top:50%;transform:translateY(-50%);
     width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;
     stroke-linecap:round;pointer-events:none;
   }
-  #busca{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--line);
-    border-radius:10px;background:var(--bg);outline:none}
+  #busca{width:100%;padding:11px 13px 11px 38px;border:1px solid var(--line-strong);
+    border-radius:11px;background:var(--bg);outline:none;transition:border-color .15s,box-shadow .15s}
   #busca:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-  .filtros{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .filtros{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
   .filtros select{
-    padding:7px 10px;border:1px solid var(--line);border-radius:9px;
-    background:var(--surface);max-width:48%;
+    padding:8px 11px;border:1px solid var(--line-strong);border-radius:10px;
+    background:var(--surface);flex:1 1 160px;max-width:220px;
   }
-  .chips{display:flex;gap:7px;overflow-x:auto;margin-top:10px;padding-bottom:2px;
-    scrollbar-width:none}
+  .chips{display:flex;gap:7px;overflow-x:auto;margin-top:9px;padding-bottom:3px;scrollbar-width:none}
   .chips::-webkit-scrollbar{display:none}
   .chip{
-    flex:0 0 auto;padding:6px 11px;border:1px solid var(--line);border-radius:999px;
-    background:var(--surface);color:var(--muted);font-size:13px;white-space:nowrap;
+    flex:0 0 auto;padding:6px 12px;border:1px solid var(--line-strong);border-radius:999px;
+    background:var(--surface);color:var(--text-2);font-size:13px;white-space:nowrap;
+    transition:background .15s,border-color .15s,color .15s;
   }
-  .chip .n{opacity:.65;margin-left:5px;font-variant-numeric:tabular-nums}
-  .chip[aria-pressed="true"]{
-    background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600;
-  }
+  .chip:hover{border-color:var(--muted)}
+  .chip .n{opacity:.6;margin-left:6px;font-variant-numeric:tabular-nums}
+  .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+  .chip[aria-pressed="true"] .n{opacity:.8}
 
-  /* ---------- lista ---------- */
-  main{padding:16px;max-width:1100px;margin:0 auto}
-  .contagem{color:var(--muted);font-size:13px;margin-bottom:12px}
-  .grade{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  /* ================= lema ================= */
+  .lema{
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    background:var(--rubro-tinta);border:1px solid var(--rubro-borda);
+    border-left:4px solid var(--rubro);border-radius:12px;
+    padding:14px 18px;margin-bottom:18px;
+  }
+  .lema .texto{
+    flex:1 1 260px;font-size:15px;line-height:1.45;font-style:italic;
+    color:var(--rubro);font-weight:520;letter-spacing:-.005em;
+  }
+  .lema .autor{
+    font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--rubro);opacity:.75;white-space:nowrap;
+  }
+  .cartao-senha .lema{
+    flex-direction:column;align-items:flex-start;gap:7px;
+    padding:13px 15px;margin:0 0 22px;border-radius:11px;
+  }
+  .cartao-senha .lema .texto{font-size:13.5px;flex:1 1 auto;text-align:left;margin:0}
+
+  main{max-width:1180px;margin:0 auto;padding:18px}
+  .contagem{color:var(--muted);font-size:13px;margin-bottom:13px}
+
+  /* ================= itens ================= */
+  .grade{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(268px,1fr))}
   .item{
     display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);
-    border-radius:var(--radius);padding:10px;box-shadow:var(--shadow);
-    text-align:left;width:100%;
+    border-radius:var(--r);padding:11px;box-shadow:var(--shadow-sm);
+    text-align:left;width:100%;transition:border-color .15s,transform .12s,box-shadow .15s;
   }
+  .item:hover{border-color:var(--line-strong);transform:translateY(-1px);box-shadow:var(--shadow)}
   .miniatura{
-    flex:0 0 62px;width:62px;height:62px;border-radius:9px;overflow:hidden;
+    flex:0 0 64px;width:64px;height:64px;border-radius:10px;overflow:hidden;
     background:var(--surface-2);display:flex;align-items:center;justify-content:center;
   }
   .miniatura img{width:100%;height:100%;object-fit:cover;display:block}
   .miniatura .vazio{font-size:10px;color:var(--muted)}
   .item .corpo{min-width:0;flex:1}
-  .item .nome{font-weight:600;font-size:14px;line-height:1.35;margin-bottom:5px;
-    overflow-wrap:anywhere}
+  .item .nome{font-weight:600;font-size:14px;line-height:1.35;margin-bottom:6px;overflow-wrap:anywhere}
   .tags{display:flex;gap:5px;flex-wrap:wrap}
-  .tag{
-    font-size:11.5px;padding:2px 7px;border-radius:6px;background:var(--surface-2);
-    color:var(--muted);white-space:nowrap;
-  }
-  .tag.destaque{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .tag{font-size:11.5px;padding:2px 8px;border-radius:6px;background:var(--surface-2);
+    color:var(--text-2);white-space:nowrap}
+  .tag.destaque{background:var(--accent-soft);color:var(--accent);font-weight:620}
   .tag.retirado{background:#fde8e8;color:#b42318}
   @media (prefers-color-scheme: dark){ .tag.retirado{background:#3a1d1d;color:#f5a3a3} }
-  .vazio-geral{text-align:center;color:var(--muted);padding:48px 16px}
+  .vazio-geral{text-align:center;color:var(--muted);padding:56px 16px}
 
-  /* ---------- detalhe ---------- */
-  #detalhe{
-    position:fixed;inset:0;z-index:40;background:rgba(10,14,20,.55);
-    display:none;align-items:center;justify-content:center;padding:20px;
+  /* ================= painel ================= */
+  #abaPainel{display:none}
+  .kpis{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:18px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+    padding:15px 16px;box-shadow:var(--shadow-sm)}
+  .kpi .v{font-size:29px;font-weight:680;letter-spacing:-.03em;line-height:1.05;
+    font-variant-numeric:tabular-nums}
+  .kpi .r{font-size:12.5px;color:var(--muted);margin-top:3px}
+
+  .cartoes{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+  .cartao{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+    padding:18px;box-shadow:var(--shadow-sm)}
+  .cartao.largo{grid-column:1/-1}
+  .cartao h2{font-size:14.5px;margin:0 0 3px;font-weight:640;letter-spacing:-.01em}
+  .cartao .dica{font-size:12.5px;color:var(--muted);margin:0 0 16px}
+
+  .rosca{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .rosca svg{flex:0 0 auto}
+  .rosca .centro-v{font-size:22px;font-weight:680;letter-spacing:-.02em;fill:var(--text)}
+  .rosca .centro-r{font-size:10.5px;fill:var(--muted);letter-spacing:.04em}
+  .arco{transition:opacity .15s}
+  .rosca:hover .arco{opacity:.42}
+  .rosca .arco:hover{opacity:1}
+  .legenda{flex:1 1 165px;min-width:155px;display:flex;flex-direction:column;gap:1px}
+  .leg{display:flex;align-items:center;gap:9px;padding:4px 6px;border-radius:7px;
+    font-size:13px;transition:background .15s}
+  .leg:hover{background:var(--surface-2)}
+  .leg .pt{width:9px;height:9px;border-radius:3px;flex:0 0 9px}
+  .leg .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-2)}
+  .leg .qt{font-variant-numeric:tabular-nums;font-weight:620;font-size:12.5px}
+  .leg .pc{font-variant-numeric:tabular-nums;color:var(--muted);font-size:11.5px;width:36px;text-align:right}
+
+  .divisor{display:flex;height:26px;border-radius:8px;overflow:hidden;gap:2px;margin-bottom:10px}
+  .divisor span{display:block}
+  .divisor span{display:block}
+  .locais-leg{display:flex;gap:18px;flex-wrap:wrap;font-size:13px}
+  .locais-leg div{display:flex;align-items:center;gap:8px}
+  .locais-leg .pt{width:9px;height:9px;border-radius:3px}
+
+  .barras{display:flex;flex-direction:column;gap:7px}
+  .barra{display:grid;grid-template-columns:96px 1fr 42px;align-items:center;gap:11px;
+    padding:2px 4px;border-radius:7px;transition:background .15s}
+  .barra:hover{background:var(--surface-2)}
+  .barra .rot{font-size:12.5px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .barra .trilho{height:11px;background:var(--surface-2);border-radius:6px;overflow:hidden}
+  .barra .preenche{display:block;height:100%;background:var(--accent);border-radius:6px;
+    transition:width .45s cubic-bezier(.2,.7,.3,1)}
+  .barra .num{font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+
+  #dica{
+    position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .12s;
+    background:var(--text);color:var(--bg);padding:6px 10px;border-radius:8px;
+    font-size:12.5px;white-space:nowrap;box-shadow:var(--shadow);
   }
+  #dica.on{opacity:1}
+
+  /* ================= detalhe ================= */
+  #detalhe{position:fixed;inset:0;z-index:50;background:rgba(10,12,16,.6);
+    display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
   #detalhe.aberto{display:flex}
-  .caixa-detalhe{
-    background:var(--surface);border-radius:16px;max-width:420px;width:100%;
-    max-height:86dvh;overflow:auto;padding:20px;
-  }
+  .caixa-detalhe{background:var(--surface);border-radius:18px;max-width:420px;width:100%;
+    max-height:86dvh;overflow:auto;padding:20px;box-shadow:var(--shadow)}
   .caixa-detalhe img{width:100%;border-radius:12px;background:var(--surface-2);margin-bottom:14px}
-  .caixa-detalhe h2{font-size:17px;margin:0 0 10px;font-weight:650}
-  .linha-info{display:flex;justify-content:space-between;gap:12px;padding:8px 0;
+  .caixa-detalhe h2{font-size:17px;margin:0 0 12px;font-weight:660;letter-spacing:-.01em}
+  .linha-info{display:flex;justify-content:space-between;gap:12px;padding:9px 0;
     border-top:1px solid var(--line);font-size:14px}
   .linha-info span:first-child{color:var(--muted)}
-  .fechar{margin-top:16px;width:100%;padding:10px;border:1px solid var(--line);
-    border-radius:10px;background:var(--surface-2);color:var(--text);font-weight:600}
-  footer{text-align:center;color:var(--muted);font-size:12px;padding:24px 16px 32px}
+  .fechar{margin-top:16px;width:100%;padding:11px;border:1px solid var(--line-strong);
+    border-radius:11px;background:var(--surface-2);font-weight:620}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:28px 16px 40px}
 </style>
 </head>
 <body>
 
 <div id="portao">
   <div class="cartao-senha">
-    <div class="cadeado">
-      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    <div class="marca">
+      <div class="selo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8.2 12 4l9 4.2v7.6L12 20l-9-4.2z"/>
+          <path d="M3 8.2 12 12.4l9-4.2M12 12.4V20"/>
+        </svg>
+      </div>
+      <div>
+        <div class="nome">Inventário Casa Irving</div>
+        <div class="sub">CONSULTA PRIVADA</div>
+      </div>
     </div>
-    <h1>Inventário de Casa</h1>
-    <p>Digite a senha para consultar.</p>
+    <div class="lema"><p class="texto">“A entropia não avisa que começou. Ela só pega um cabo emprestado.”</p><span class="autor">Irving</span></div>
+    <h1>Área protegida</h1>
+    <p>Digite a senha para consultar o inventário.</p>
     <input id="senha" class="campo" type="password" autocomplete="off" placeholder="Senha">
     <button id="entrar" class="botao">Entrar</button>
     <div class="erro" id="erro"></div>
@@ -169,37 +292,86 @@
 
 <div id="painel">
   <header>
-    <div class="topo">
-      <h1>Inventário de Casa</h1>
-      <span class="resumo" id="resumo"></span>
+    <div class="faixa">
+      <div class="marca">
+        <div class="selo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 8.2 12 4l9 4.2v7.6L12 20l-9-4.2z"/>
+            <path d="M3 8.2 12 12.4l9-4.2M12 12.4V20"/>
+          </svg>
+        </div>
+        <div>
+          <div class="nome">Inventário Casa Irving</div>
+          <div class="sub" id="resumo"></div>
+        </div>
+      </div>
+      <div class="abas" role="tablist">
+        <button class="aba" id="tabItens"  role="tab" aria-selected="true">Itens</button>
+        <button class="aba" id="tabPainel" role="tab" aria-selected="false">Painel</button>
+      </div>
     </div>
-    <div class="busca-caixa">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      <input id="busca" type="search" placeholder="Buscar item, caixa ou local..." autocomplete="off">
+    <div class="barra-ferramentas" id="ferramentas">
+      <div class="busca-caixa">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="busca" type="search" placeholder="Buscar item, caixa ou local..." autocomplete="off">
+      </div>
+      <div class="filtros">
+        <select id="filtroLocal"></select>
+        <select id="filtroCaixa"></select>
+      </div>
+      <div class="chips" id="chips"></div>
     </div>
-    <div class="filtros">
-      <select id="filtroLocal"></select>
-      <select id="filtroCaixa"></select>
-    </div>
-    <div class="chips" id="chips"></div>
   </header>
+
   <main>
-    <div class="contagem" id="contagem"></div>
-    <div class="grade" id="grade"></div>
+    <div class="lema"><p class="texto">“A entropia não avisa que começou. Ela só pega um cabo emprestado.”</p><span class="autor">Irving</span></div>
+
+    <section id="abaItens">
+      <div class="contagem" id="contagem"></div>
+      <div class="grade" id="grade"></div>
+    </section>
+
+    <section id="abaPainel">
+      <div class="kpis" id="kpis"></div>
+      <div class="cartoes">
+        <div class="cartao largo">
+          <h2>Onde estão os itens</h2>
+          <p class="dica">Divisão do inventário entre os locais.</p>
+          <div class="divisor" id="divisorLocais"></div>
+          <div class="locais-leg" id="legLocais"></div>
+        </div>
+        <div class="cartao">
+          <h2>Por categoria</h2>
+          <p class="dica">As cinco maiores categorias e o restante somado.</p>
+          <div class="rosca" id="roscaCategorias"></div>
+        </div>
+        <div class="cartao">
+          <h2>Por caixa</h2>
+          <p class="dica">As cinco caixas mais cheias e o restante somado.</p>
+          <div class="rosca" id="roscaCaixas"></div>
+        </div>
+        <div class="cartao largo">
+          <h2>Todas as caixas</h2>
+          <p class="dica">Da mais cheia para a mais vazia.</p>
+          <div class="barras" id="barrasCaixas"></div>
+        </div>
+      </div>
+    </section>
   </main>
   <footer>Consulta somente leitura. Os cadastros continuam no AppSheet.</footer>
 </div>
 
 <div id="detalhe"><div class="caixa-detalhe" id="caixaDetalhe"></div></div>
+<div id="dica"></div>
 
 <script>
 /* ==================================================================
-   1. Endereço da ponte (Apps Script). Trocar aqui se republicar.
+   1. Endereço da ponte (Apps Script)
    ================================================================== */
 const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzHxL4ukcby5aCeM7DzA_5JvJpt4u7RWNAoM0LjA93LMmtYHQi8qAaWAwUVDounEiXj/exec';
 
 /* ==================================================================
-   2. Conversa com a ponte, via JSONP (funciona sem servidor nenhum)
+   2. Conversa com a ponte (JSONP: funciona sem servidor nenhum)
    ================================================================== */
 let contadorChamada = 0;
 function chamar(params, tempoLimite = 30000){
@@ -221,22 +393,21 @@ function chamar(params, tempoLimite = 30000){
 }
 
 /* ==================================================================
-   3. Categorias automáticas por palavra-chave
-   A ordem importa: vale a primeira regra que casar.
+   3. Categorias automáticas por palavra-chave (vale a 1a regra que casar)
    ================================================================== */
 const REGRAS = [
   ['Games',              /playstation|\bps2\b|\bps4\b|master system|mega drive|xbox|kinect|videogame|nintendo|joystick|hotas|simulador (de )?(voo|aviao)|fidget|ioio|yoyo|meta quest|\bvr\b/],
   ['Armas e munição',    /coldre|municao|municoes|rapid loader|porta carregador|prensa de muni|trava cadeado|sig ?sauer|taurus|pt59|p320|airsoft|cinto tatico/],
-  ['Automotivo e moto',  /civic|bmw|320i|maverick|gsx|honda|suzuki|pastilha|vela(s)? usada|bicos|biscos|retrovisor|farol|seta |sonda|wideband|fusivel|chupeta|capacete|moto\b|veicular|automotivo|placa de carro|triangulo carro|chave de roda|cardo|lambda|caçamba|cacamba/],
+  ['Automotivo e moto',  /civic|bmw|320i|maverick|gsx|honda|suzuki|pastilha|vela(s)? usada|bicos|biscos|retrovisor|farol|seta |sonda|fusivel|chupeta|capacete|moto\b|veicular|automotivo|placa de carro|triangulo carro|chave de roda|cardo|lambda|cacamba/],
   ['Áudio, foto e TI',   /hdmi|usb|roteador|mouse|teclado|chromecast|raspberry|controle|microfone|fone de ouvido|camera|scanner|ring light|tripe|lente|displayport|cabo de rede|impressora|monitor|pen ?drive|antena|jammer|wideband|starlink|bluetooth|gps/],
   ['Iluminação',         /lampada|spot|refletor|arandela|\bluz\b|lanterna|\bled\b|luminaria/],
-  ['Cabos e energia',    /cabo|fio |fio,|fios|fonte|extensao|extençao|plugue|tomada|adaptador|carregador|bateria|pilha|interruptor|rele|terminal|conduite|coaxial|eletrico|garra jacare|energia|termo ?retratil|termoretratil|espaguete/],
-  ['Fixadores',          /parafuso|porca|arruela|bucha|prego|abracadeira|abraçadeira|ilho|grampo|rebite|gancho|soberbo|presilha|mao francesa|mão francesa|suporte prateleira/],
-  ['Ferramentas',        /alicate|chave|serra|broca|estilete|tesoura|paquimetro|fita metrica|\blima\b|afiador|afiacao|rebolo|solda|estanho|pinca|pinça|morsa|grampeador|espatula|prensa|guilhotina|medidor|transferidor|\bbit\b|bits|martelo|furadeira|pedra de afiar|matrizes|guia de/],
-  ['Papelaria',          /caneta|lapis|papel|borracha|boracha|post ?it|prancheta|caderno|\bcola\b|cola |giz|apontador|bloco de nota|calculadora|etiqueta|cracha|crachá|montblanc|computador de voo/],
-  ['Música',             /guitarra|ukulele|gaita|baqueta|pedaleira|capotraste|escaleta|pianica|instrumento|porta ?facas? tecido/],
-  ['Costura e couro',    /costura|agulha|linha |linhas|alfinete|tecido|couro|bainha|barbante|\bbotao\b|puxador de couro/],
-  ['Casa e jardim',      /jardinagem|mangueira|torneira|irrigacao|irrigação|cupim|espuma|manta|adesivo|silicone|puxador|rodizio|trinco|fechadura|vedacao|oring|o-ring|engate|filtro|tapete|almofada|mascara|raquete|enxofre|arame|horta|volacha|madeira|pincel|tinta/]
+  ['Cabos e energia',    /cabo|fio |fio,|fios|fonte|extensao|extencao|plugue|tomada|adaptador|carregador|bateria|pilha|interruptor|rele|terminal|conduite|coaxial|eletrico|garra jacare|energia|termo ?retratil|termoretratil|espaguete/],
+  ['Fixadores',          /parafuso|porca|arruela|bucha|prego|abracadeira|ilho|grampo|rebite|gancho|soberbo|presilha|mao francesa|suporte prateleira/],
+  ['Ferramentas',        /alicate|chave|serra|broca|estilete|tesoura|paquimetro|fita metrica|\blima\b|afiador|afiacao|rebolo|solda|estanho|pinca|morsa|grampeador|espatula|prensa|guilhotina|medidor|transferidor|\bbit\b|bits|martelo|furadeira|pedra de afiar|matrizes|guia de/],
+  ['Papelaria',          /caneta|lapis|papel|borracha|boracha|post ?it|prancheta|caderno|\bcola\b|cola |giz|apontador|bloco de nota|calculadora|etiqueta|cracha|montblanc|computador de voo/],
+  ['Música',             /guitarra|ukulele|gaita|baqueta|pedaleira|capotraste|escaleta|pianica|instrumento/],
+  ['Costura e couro',    /costura|agulha|linha |linhas|alfinete|tecido|couro|bainha|barbante|\bbotao\b/],
+  ['Casa e jardim',      /jardinagem|mangueira|torneira|irrigacao|cupim|espuma|manta|adesivo|silicone|puxador|rodizio|trinco|fechadura|vedacao|oring|o-ring|engate|filtro|tapete|almofada|mascara|raquete|enxofre|arame|horta|volacha|madeira|pincel|tinta/]
 ];
 function normalizar(t){
   return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -253,6 +424,13 @@ function categoriaDe(item){
 let SENHA_OK = '';
 let ITENS = [];
 let categoriaAtiva = 'Todas';
+const CORES = ['--s1','--s2','--s3','--s4','--s5','--s6'];
+const CINZA = '--line-strong';
+/** O balde "Outras" fica cinza de proposito: recua e deixa as fatias nomeadas na frente. */
+function corDaFatia(pares, k){
+  const ehResto = /^Outras \(/.test(pares[k][0]);
+  return 'var(' + (ehResto ? CINZA : CORES[k % CORES.length]) + ')';
+}
 
 /* ==================================================================
    5. Login
@@ -260,24 +438,18 @@ let categoriaAtiva = 'Todas';
 const elSenha  = document.getElementById('senha');
 const elEntrar = document.getElementById('entrar');
 const elErro   = document.getElementById('erro');
-
 elEntrar.addEventListener('click', entrar);
 elSenha.addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); });
 
 async function entrar(){
   const senha = elSenha.value.trim();
   if (!senha) return;
-  elEntrar.disabled = true;
-  elEntrar.textContent = 'Verificando...';
-  elErro.textContent = '';
+  elEntrar.disabled = true; elEntrar.textContent = 'Verificando...'; elErro.textContent = '';
   try{
     const r = await chamar({ pw: senha });
     if (!r || !r.ok){
-      elErro.textContent = (r && r.erro === 'senha')
-        ? 'Senha incorreta.'
-        : 'Não consegui carregar. Tente de novo.';
-      elEntrar.disabled = false;
-      elEntrar.textContent = 'Entrar';
+      elErro.textContent = (r && r.erro === 'senha') ? 'Senha incorreta.' : 'Não consegui carregar. Tente de novo.';
+      elEntrar.disabled = false; elEntrar.textContent = 'Entrar';
       return;
     }
     SENHA_OK = senha;
@@ -287,223 +459,292 @@ async function entrar(){
     iniciarPainel();
   }catch(err){
     elErro.textContent = 'Sem resposta do servidor. Confira sua internet.';
-    elEntrar.disabled = false;
-    elEntrar.textContent = 'Entrar';
+    elEntrar.disabled = false; elEntrar.textContent = 'Entrar';
   }
 }
 
 /* ==================================================================
-   6. Painel
+   6. Painel geral
    ================================================================== */
-const elBusca    = document.getElementById('busca');
-const elLocal    = document.getElementById('filtroLocal');
-const elCaixa    = document.getElementById('filtroCaixa');
-const elChips    = document.getElementById('chips');
-const elGrade    = document.getElementById('grade');
-const elContagem = document.getElementById('contagem');
-const elResumo   = document.getElementById('resumo');
+const elBusca=document.getElementById('busca'), elLocal=document.getElementById('filtroLocal'),
+      elCaixa=document.getElementById('filtroCaixa'), elChips=document.getElementById('chips'),
+      elGrade=document.getElementById('grade'), elContagem=document.getElementById('contagem'),
+      elResumo=document.getElementById('resumo'), elFerramentas=document.getElementById('ferramentas'),
+      elAbaItens=document.getElementById('abaItens'), elAbaPainel=document.getElementById('abaPainel'),
+      btItens=document.getElementById('tabItens'), btPainel=document.getElementById('tabPainel');
 
-function ordenarCaixas(a, b){
-  const na = parseInt(String(a).replace(/\D/g,''), 10);
-  const nb = parseInt(String(b).replace(/\D/g,''), 10);
-  if (!isNaN(na) && !isNaN(nb) && na !== nb) return na - nb;
-  return String(a).localeCompare(String(b), 'pt-BR');
+function ordenarCaixas(a,b){
+  const na=parseInt(String(a).replace(/\D/g,''),10), nb=parseInt(String(b).replace(/\D/g,''),10);
+  if(!isNaN(na)&&!isNaN(nb)&&na!==nb) return na-nb;
+  return String(a).localeCompare(String(b),'pt-BR');
+}
+function contar(chave){
+  const m = new Map();
+  ITENS.forEach(i => { const k = i[chave] || 'Sem informação'; m.set(k, (m.get(k)||0)+1); });
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]);
 }
 
 function iniciarPainel(){
-  const locais = [...new Set(ITENS.map(i => i.local).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  const caixas = [...new Set(ITENS.map(i => i.caixa).filter(Boolean))].sort(ordenarCaixas);
+  const locais = [...new Set(ITENS.map(i=>i.local).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const caixas = [...new Set(ITENS.map(i=>i.caixa).filter(Boolean))].sort(ordenarCaixas);
+  elResumo.textContent = ITENS.length + ' ITENS · ' + caixas.length + ' CAIXAS';
 
-  elResumo.textContent = ITENS.length + ' itens · ' + caixas.length + ' caixas · ' + locais.length + ' locais';
-
-  elLocal.innerHTML = '<option value="">Todos os locais</option>' +
-    locais.map(l => '<option>' + escapar(l) + '</option>').join('');
-  elCaixa.innerHTML = '<option value="">Todas as caixas</option>' +
-    caixas.map(c => '<option>' + escapar(c) + '</option>').join('');
+  elLocal.innerHTML = '<option value="">Todos os locais</option>' + locais.map(l=>'<option>'+escapar(l)+'</option>').join('');
+  elCaixa.innerHTML = '<option value="">Todas as caixas</option>' + caixas.map(c=>'<option>'+escapar(c)+'</option>').join('');
 
   montarChips();
   [elBusca, elLocal, elCaixa].forEach(el => el.addEventListener('input', desenhar));
+  btItens.addEventListener('click', ()=>trocarAba('itens'));
+  btPainel.addEventListener('click', ()=>trocarAba('painel'));
   desenhar();
+  montarGraficos(locais.length, caixas.length);
+}
+
+function trocarAba(qual){
+  const itens = qual === 'itens';
+  btItens.setAttribute('aria-selected', String(itens));
+  btPainel.setAttribute('aria-selected', String(!itens));
+  elAbaItens.style.display  = itens ? 'block' : 'none';
+  elAbaPainel.style.display = itens ? 'none'  : 'block';
+  elFerramentas.style.display = itens ? 'block' : 'none';
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 
 function montarChips(){
   const contagens = {};
-  ITENS.forEach(i => { contagens[i.categoria] = (contagens[i.categoria] || 0) + 1; });
-  const ordenadas = Object.keys(contagens).sort((a,b) => contagens[b] - contagens[a]);
-  const lista = ['Todas', ...ordenadas];
-
-  elChips.innerHTML = lista.map(nome => {
-    const n = nome === 'Todas' ? ITENS.length : contagens[nome];
-    const ativo = nome === categoriaAtiva;
-    return '<button class="chip" aria-pressed="' + ativo + '" data-cat="' + escapar(nome) + '">' +
-           escapar(nome) + '<span class="n">' + n + '</span></button>';
+  ITENS.forEach(i => { contagens[i.categoria] = (contagens[i.categoria]||0)+1; });
+  const lista = ['Todas', ...Object.keys(contagens).sort((a,b)=>contagens[b]-contagens[a])];
+  elChips.innerHTML = lista.map(nome=>{
+    const n = nome==='Todas' ? ITENS.length : contagens[nome];
+    return '<button class="chip" aria-pressed="'+(nome===categoriaAtiva)+'" data-cat="'+escapar(nome)+'">'+
+           escapar(nome)+'<span class="n">'+n+'</span></button>';
   }).join('');
-
-  elChips.querySelectorAll('.chip').forEach(b => {
-    b.addEventListener('click', () => {
+  elChips.querySelectorAll('.chip').forEach(b=>{
+    b.addEventListener('click', ()=>{
       categoriaAtiva = b.dataset.cat;
-      elChips.querySelectorAll('.chip').forEach(o =>
-        o.setAttribute('aria-pressed', String(o.dataset.cat === categoriaAtiva)));
+      elChips.querySelectorAll('.chip').forEach(o=>o.setAttribute('aria-pressed', String(o.dataset.cat===categoriaAtiva)));
       desenhar();
     });
   });
 }
 
 function filtrar(){
-  const termo  = normalizar(elBusca.value.trim());
-  const termos = termo ? termo.split(/\s+/) : [];
-  const local  = elLocal.value;
-  const caixa  = elCaixa.value;
-
-  return ITENS.filter(i => {
-    if (categoriaAtiva !== 'Todas' && i.categoria !== categoriaAtiva) return false;
-    if (local && i.local !== local) return false;
-    if (caixa && i.caixa !== caixa) return false;
+  const termos = normalizar(elBusca.value.trim()) ? normalizar(elBusca.value.trim()).split(/\s+/) : [];
+  const local = elLocal.value, caixa = elCaixa.value;
+  return ITENS.filter(i=>{
+    if (categoriaAtiva!=='Todas' && i.categoria!==categoriaAtiva) return false;
+    if (local && i.local!==local) return false;
+    if (caixa && i.caixa!==caixa) return false;
     if (!termos.length) return true;
-    const alvo = normalizar([i.item, i.obs, i.caixa, i.local, i.id, i.categoria].join(' '));
-    return termos.every(t => alvo.includes(t));
+    const alvo = normalizar([i.item,i.obs,i.caixa,i.local,i.id,i.categoria].join(' '));
+    return termos.every(t=>alvo.includes(t));
   });
 }
 
 function desenhar(){
   const lista = filtrar();
-  elContagem.textContent = lista.length === ITENS.length
+  elContagem.textContent = lista.length===ITENS.length
     ? 'Mostrando todos os ' + lista.length + ' itens'
     : 'Mostrando ' + lista.length + ' de ' + ITENS.length + ' itens';
-
   if (!lista.length){
     elGrade.innerHTML = '<div class="vazio-geral">Nada encontrado com esses filtros.</div>';
     return;
   }
-
-  elGrade.innerHTML = lista.map((i, pos) => {
+  elGrade.innerHTML = lista.map(i=>{
     const idx = ITENS.indexOf(i);
-    const retirado = normalizar(i.status) === 'retirado';
-    return '' +
-      '<button class="item" data-idx="' + idx + '">' +
-        '<div class="miniatura" data-foto="' + escapar(i.foto) + '">' +
-          (i.foto ? '' : '<span class="vazio">sem foto</span>') +
-        '</div>' +
-        '<div class="corpo">' +
-          '<div class="nome">' + escapar(i.item) + '</div>' +
-          '<div class="tags">' +
-            '<span class="tag destaque">' + escapar(i.caixa || 'sem caixa') + '</span>' +
-            '<span class="tag">' + escapar(i.local) + '</span>' +
-            (retirado ? '<span class="tag retirado">retirado</span>' : '') +
-          '</div>' +
-        '</div>' +
-      '</button>';
+    const retirado = normalizar(i.status)==='retirado';
+    return '<button class="item" data-idx="'+idx+'">'+
+      '<div class="miniatura" data-foto="'+escapar(i.foto)+'">'+(i.foto?'':'<span class="vazio">sem foto</span>')+'</div>'+
+      '<div class="corpo"><div class="nome">'+escapar(i.item)+'</div><div class="tags">'+
+        '<span class="tag destaque">'+escapar(i.caixa||'sem caixa')+'</span>'+
+        '<span class="tag">'+escapar(i.local)+'</span>'+
+        (retirado?'<span class="tag retirado">retirado</span>':'')+
+      '</div></div></button>';
   }).join('');
-
-  elGrade.querySelectorAll('.item').forEach(el => {
-    el.addEventListener('click', () => abrirDetalhe(ITENS[+el.dataset.idx]));
+  elGrade.querySelectorAll('.item').forEach(el=>{
+    el.addEventListener('click', ()=>abrirDetalhe(ITENS[+el.dataset.idx]));
   });
   observarFotos();
 }
 
 /* ==================================================================
-   7. Fotos: carregam só quando aparecem na tela, poucas por vez
+   7. Gráficos
    ================================================================== */
-const cacheFotos = new Map();
-const fila = [];
-let emAndamento = 0;
-const LIMITE = 4;
+const elDica = document.getElementById('dica');
+function mostrarDica(e, texto){
+  elDica.textContent = texto;
+  elDica.classList.add('on');
+  const m = 14;
+  let x = e.clientX + m, y = e.clientY + m;
+  const l = elDica.getBoundingClientRect();
+  if (x + l.width  > innerWidth  - 8) x = e.clientX - l.width  - m;
+  if (y + l.height > innerHeight - 8) y = e.clientY - l.height - m;
+  elDica.style.left = x + 'px'; elDica.style.top = y + 'px';
+}
+function esconderDica(){ elDica.classList.remove('on'); }
 
-let observador = null;
-function observarFotos(){
-  if (observador) observador.disconnect();
-  observador = new IntersectionObserver(entradas => {
-    entradas.forEach(e => {
-      if (!e.isIntersecting) return;
-      observador.unobserve(e.target);
-      agendarFoto(e.target);
-    });
-  }, { rootMargin: '250px' });
-  elGrade.querySelectorAll('.miniatura[data-foto]').forEach(el => {
-    if (el.dataset.foto) observador.observe(el);
+/** Agrupa em no máximo 5 fatias + "Outras", para a rosca continuar legível. */
+function topoMais(pares, limite = 5){
+  if (pares.length <= limite + 1) return pares;
+  const topo = pares.slice(0, limite);
+  const resto = pares.slice(limite).reduce((s, p) => s + p[1], 0);
+  return topo.concat([['Outras (' + (pares.length - limite) + ')', resto]]);
+}
+
+function rosca(alvo, pares, rotuloCentro){
+  const total = pares.reduce((s,p)=>s+p[1],0);
+  const R = 62, L = 15, C = 2*Math.PI*R, GAP = 3;
+  let desloc = 0;
+  let arcos = '';
+  pares.forEach((p, k)=>{
+    const bruto = (p[1]/total) * C;
+    const comp  = Math.max(bruto - GAP, 1.2);
+    arcos +=
+      '<circle class="arco" cx="75" cy="75" r="'+R+'" fill="none" stroke-linecap="butt"' +
+      ' stroke="'+corDaFatia(pares,k)+'" stroke-width="'+L+'"' +
+      ' stroke-dasharray="'+comp.toFixed(2)+' '+(C-comp).toFixed(2)+'"' +
+      ' stroke-dashoffset="'+(-desloc).toFixed(2)+'" data-k="'+k+'"></circle>';
+    desloc += bruto;
+  });
+
+  alvo.innerHTML =
+    '<svg width="150" height="150" viewBox="0 0 150 150" role="img">' +
+      '<g transform="rotate(-90 75 75)">' + arcos + '</g>' +
+      '<text class="centro-v" x="75" y="72" text-anchor="middle">'+total+'</text>' +
+      '<text class="centro-r" x="75" y="88" text-anchor="middle">'+rotuloCentro.toUpperCase()+'</text>' +
+    '</svg>' +
+    '<div class="legenda">' + pares.map((p,k)=>
+      '<div class="leg" data-k="'+k+'">' +
+        '<span class="pt" style="background:'+corDaFatia(pares,k)+'"></span>' +
+        '<span class="nm">'+escapar(p[0])+'</span>' +
+        '<span class="qt">'+p[1]+'</span>' +
+        '<span class="pc">'+Math.round(p[1]/total*100)+'%</span>' +
+      '</div>').join('') + '</div>';
+
+  const dizer = k => pares[k][0] + ': ' + pares[k][1] + ' itens (' + Math.round(pares[k][1]/total*100) + '%)';
+  alvo.querySelectorAll('.arco, .leg').forEach(el=>{
+    const k = +el.dataset.k;
+    el.addEventListener('mousemove', e => mostrarDica(e, dizer(k)));
+    el.addEventListener('mouseleave', esconderDica);
   });
 }
 
+function barras(alvo, pares){
+  const maior = Math.max(...pares.map(p=>p[1]));
+  alvo.innerHTML = pares.map(p=>
+    '<div class="barra"><span class="rot">'+escapar(p[0])+'</span>' +
+    '<span class="trilho"><span class="preenche" style="width:'+(p[1]/maior*100).toFixed(1)+'%"></span></span>' +
+    '<span class="num">'+p[1]+'</span></div>').join('');
+  alvo.querySelectorAll('.barra').forEach((el,k)=>{
+    el.addEventListener('mousemove', e => mostrarDica(e, pares[k][0] + ': ' + pares[k][1] + ' itens'));
+    el.addEventListener('mouseleave', esconderDica);
+  });
+}
+
+function montarGraficos(qtdLocais, qtdCaixas){
+  const porLocal = contar('local'), porCaixa = contar('caixa'), porCat = contar('categoria');
+  const total = ITENS.length;
+
+  document.getElementById('kpis').innerHTML = [
+    [total, 'itens cadastrados'],
+    [qtdCaixas, 'caixas'],
+    [qtdLocais, 'locais'],
+    [porCat.length, 'categorias']
+  ].map(([v,r])=>'<div class="kpi"><div class="v">'+v+'</div><div class="r">'+r+'</div></div>').join('');
+
+  const div = document.getElementById('divisorLocais');
+  div.innerHTML = porLocal.map((p,k)=>
+    '<span data-k="'+k+'" style="width:'+(p[1]/total*100)+'%;background:var('+CORES[k%CORES.length]+')"></span>').join('');
+  document.getElementById('legLocais').innerHTML = porLocal.map((p,k)=>
+    '<div><span class="pt" style="background:var('+CORES[k%CORES.length]+')"></span>' +
+    '<span>'+escapar(p[0])+'</span> <strong>'+p[1]+'</strong> ' +
+    '<span style="color:var(--muted)">('+Math.round(p[1]/total*100)+'%)</span></div>').join('');
+  div.querySelectorAll('span').forEach(el=>{
+    const k = +el.dataset.k;
+    el.addEventListener('mousemove', e => mostrarDica(e, porLocal[k][0]+': '+porLocal[k][1]+' itens'));
+    el.addEventListener('mouseleave', esconderDica);
+  });
+
+  rosca(document.getElementById('roscaCategorias'), topoMais(porCat),   'itens');
+  rosca(document.getElementById('roscaCaixas'),     topoMais(porCaixa), 'itens');
+  barras(document.getElementById('barrasCaixas'), porCaixa);
+}
+
+/* ==================================================================
+   8. Fotos sob demanda
+   ================================================================== */
+const cacheFotos = new Map();
+const fila = []; let emAndamento = 0; const LIMITE = 4;
+let observador = null;
+
+function observarFotos(){
+  if (observador) observador.disconnect();
+  observador = new IntersectionObserver(ent=>{
+    ent.forEach(e=>{ if(!e.isIntersecting) return; observador.unobserve(e.target); agendarFoto(e.target); });
+  }, { rootMargin:'250px' });
+  elGrade.querySelectorAll('.miniatura[data-foto]').forEach(el=>{ if(el.dataset.foto) observador.observe(el); });
+}
 function agendarFoto(el){
   const nome = el.dataset.foto;
   if (!nome) return;
   if (cacheFotos.has(nome)) return pintarFoto(el, cacheFotos.get(nome));
-  fila.push({ el, nome });
-  puxarFila();
+  fila.push({ el, nome }); puxarFila();
 }
-
 function puxarFila(){
   while (emAndamento < LIMITE && fila.length){
-    const tarefa = fila.shift();
-    emAndamento++;
-    chamar({ pw: SENHA_OK, img: tarefa.nome }, 25000)
-      .then(r => {
-        const dados = (r && r.ok && r.img) ? r.img : '';
-        cacheFotos.set(tarefa.nome, dados);
-        pintarFoto(tarefa.el, dados);
-      })
-      .catch(() => { pintarFoto(tarefa.el, ''); })
-      .finally(() => { emAndamento--; puxarFila(); });
+    const t = fila.shift(); emAndamento++;
+    chamar({ pw:SENHA_OK, img:t.nome }, 25000)
+      .then(r=>{ const d=(r&&r.ok&&r.img)?r.img:''; cacheFotos.set(t.nome,d); pintarFoto(t.el,d); })
+      .catch(()=>pintarFoto(t.el,''))
+      .finally(()=>{ emAndamento--; puxarFila(); });
   }
 }
-
 function pintarFoto(el, dados){
   if (!el || !el.isConnected) return;
   if (!dados){ el.innerHTML = '<span class="vazio">sem foto</span>'; return; }
-  const img = new Image();
-  img.src = dados;
-  img.alt = '';
-  el.innerHTML = '';
-  el.appendChild(img);
+  const img = new Image(); img.src = dados; img.alt = '';
+  el.innerHTML = ''; el.appendChild(img);
 }
 
 /* ==================================================================
-   8. Detalhe do item
+   9. Detalhe
    ================================================================== */
 const elDetalhe = document.getElementById('detalhe');
 const elCaixaDetalhe = document.getElementById('caixaDetalhe');
 
 function abrirDetalhe(i){
   const foto = cacheFotos.get(i.foto);
-
-  // Se a foto ainda nao tinha sido carregada, busca agora.
   if (i.foto && !foto){
-    chamar({ pw: SENHA_OK, img: i.foto }, 25000).then(r => {
-      const dados = (r && r.ok && r.img) ? r.img : '';
-      cacheFotos.set(i.foto, dados);
-      if (dados && elDetalhe.classList.contains('aberto') && !elCaixaDetalhe.querySelector('img')){
-        const img = new Image();
-        img.src = dados;
+    chamar({ pw:SENHA_OK, img:i.foto }, 25000).then(r=>{
+      const d = (r&&r.ok&&r.img)?r.img:'';
+      cacheFotos.set(i.foto, d);
+      if (d && elDetalhe.classList.contains('aberto') && !elCaixaDetalhe.querySelector('img')){
+        const img = new Image(); img.src = d;
         elCaixaDetalhe.insertBefore(img, elCaixaDetalhe.firstChild);
       }
-    }).catch(() => {});
+    }).catch(()=>{});
   }
-
   elCaixaDetalhe.innerHTML =
-    (foto ? '<img src="' + foto + '" alt="">' : '') +
-    '<h2>' + escapar(i.item) + '</h2>' +
-    linha('Caixa', i.caixa) +
-    linha('Local', i.local) +
-    linha('Categoria', i.categoria) +
-    linha('Código', i.id) +
+    (foto ? '<img src="'+foto+'" alt="">' : '') +
+    '<h2>'+escapar(i.item)+'</h2>' +
+    linha('Caixa', i.caixa) + linha('Local', i.local) +
+    linha('Categoria', i.categoria) + linha('Código', i.id) +
     (i.obs ? linha('Observação', i.obs) : '') +
     linha('Status', i.status || '-') +
     '<button class="fechar" id="btFechar">Fechar</button>';
   elDetalhe.classList.add('aberto');
   document.getElementById('btFechar').addEventListener('click', fecharDetalhe);
 }
-function linha(rotulo, valor){
-  return '<div class="linha-info"><span>' + rotulo + '</span><span>' + escapar(valor || '-') + '</span></div>';
+function linha(rot, val){
+  return '<div class="linha-info"><span>'+rot+'</span><span>'+escapar(val||'-')+'</span></div>';
 }
 function fecharDetalhe(){ elDetalhe.classList.remove('aberto'); }
-elDetalhe.addEventListener('click', e => { if (e.target === elDetalhe) fecharDetalhe(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharDetalhe(); });
+elDetalhe.addEventListener('click', e=>{ if(e.target===elDetalhe) fecharDetalhe(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') fecharDetalhe(); });
 
-/* ---------- utilidade ---------- */
 function escapar(t){
-  return String(t == null ? '' : t)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 </script>
 </body>
