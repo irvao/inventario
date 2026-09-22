@@ -133,6 +133,42 @@
     padding:8px 11px;border:1px solid var(--line-strong);border-radius:10px;
     background:var(--surface);flex:1 1 160px;max-width:220px;
   }
+
+  /* ---- seletor de caixa com busca ---- */
+  .combo{position:relative;flex:1 1 160px;max-width:220px}
+  .combo input{
+    width:100%;padding:8px 32px 8px 11px;border:1px solid var(--line-strong);
+    border-radius:10px;background:var(--surface);outline:none;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  .combo input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .combo input.escolhido{font-weight:620;color:var(--accent)}
+  .combo-seta{
+    position:absolute;right:11px;top:50%;transform:translateY(-50%);
+    width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+  }
+  .combo-limpar{
+    position:absolute;right:6px;top:50%;transform:translateY(-50%);
+    width:22px;height:22px;padding:0;border:0;border-radius:50%;
+    background:var(--surface-2);color:var(--text-2);font-size:15px;line-height:1;
+  }
+  .combo-limpar:hover{color:var(--text)}
+  .combo-lista{
+    position:absolute;z-index:45;top:calc(100% + 5px);left:0;right:0;
+    max-height:274px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    background:var(--surface);border:1px solid var(--line-strong);
+    border-radius:12px;box-shadow:var(--shadow);padding:5px;
+  }
+  .combo-op{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    width:100%;padding:9px 11px;border:0;border-radius:8px;background:transparent;
+    text-align:left;font-size:14px;
+  }
+  .combo-op:hover,.combo-op.ativo{background:var(--surface-2)}
+  .combo-op[aria-selected="true"]{color:var(--accent);font-weight:640}
+  .combo-op .n{color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums}
+  .combo-vazio{padding:11px;color:var(--muted);font-size:13.5px}
   .chips{display:flex;gap:7px;overflow-x:auto;margin-top:9px;padding-bottom:3px;scrollbar-width:none}
   .chips::-webkit-scrollbar{display:none}
   .chip{
@@ -317,7 +353,15 @@
       </div>
       <div class="filtros">
         <select id="filtroLocal"></select>
-        <select id="filtroCaixa"></select>
+        <div class="combo" id="comboCaixa">
+          <input id="comboCaixaBusca" type="text" placeholder="Todas as caixas"
+                 role="combobox" aria-expanded="false" aria-controls="comboCaixaLista"
+                 aria-autocomplete="list" autocomplete="off">
+          <svg class="combo-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg>
+          <button type="button" class="combo-limpar" id="comboCaixaLimpar" aria-label="Limpar caixa" hidden>&times;</button>
+          <div class="combo-lista" id="comboCaixaLista" role="listbox" hidden></div>
+        </div>
+        <input type="hidden" id="filtroCaixa">
       </div>
       <div class="chips" id="chips"></div>
     </div>
@@ -424,7 +468,7 @@ const REGRAS = [
   ['Casa e jardim',      /jardinagem|mangueira|torneira|irrigacao|cupim|espuma|manta|adesivo|silicone|puxador|rodizio|trinco|fechadura|vedacao|oring|o-ring|engate|filtro|tapete|almofada|mascara|raquete|enxofre|arame|horta|volacha|madeira|pincel|tinta/]
 ];
 function normalizar(t){
-  return String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 }
 function categoriaDe(item){
   const texto = normalizar(item.item + ' ' + item.obs);
@@ -489,6 +533,8 @@ async function entrar(){
    ================================================================== */
 const elBusca=document.getElementById('busca'), elLocal=document.getElementById('filtroLocal'),
       elCaixa=document.getElementById('filtroCaixa'), elChips=document.getElementById('chips'),
+      comboRaiz=document.getElementById('comboCaixa'), comboInput=document.getElementById('comboCaixaBusca'),
+      comboLista=document.getElementById('comboCaixaLista'), comboLimpar=document.getElementById('comboCaixaLimpar'),
       elGrade=document.getElementById('grade'), elContagem=document.getElementById('contagem'),
       elResumo=document.getElementById('resumo'), elFerramentas=document.getElementById('ferramentas'),
       elAbaItens=document.getElementById('abaItens'), elAbaPainel=document.getElementById('abaPainel'),
@@ -511,14 +557,90 @@ function iniciarPainel(){
   elResumo.textContent = ITENS.length + ' ITENS · ' + caixas.length + ' CAIXAS';
 
   elLocal.innerHTML = '<option value="">Todos os locais</option>' + locais.map(l=>'<option>'+escapar(l)+'</option>').join('');
-  elCaixa.innerHTML = '<option value="">Todas as caixas</option>' + caixas.map(c=>'<option>'+escapar(c)+'</option>').join('');
+  montarComboCaixa(caixas);
 
   montarChips();
-  [elBusca, elLocal, elCaixa].forEach(el => el.addEventListener('input', desenhar));
+  [elBusca, elLocal].forEach(el => el.addEventListener('input', desenhar));
   btItens.addEventListener('click', ()=>trocarAba('itens'));
   btPainel.addEventListener('click', ()=>trocarAba('painel'));
   desenhar();
   montarGraficos(locais.length, caixas.length);
+}
+
+/* ---- seletor de caixa com busca ---------------------------------- */
+let CAIXAS = [], QTD_CAIXA = new Map(), comboAtivo = -1;
+
+function montarComboCaixa(caixas){
+  CAIXAS = caixas;
+  QTD_CAIXA = new Map();
+  ITENS.forEach(i => { if (i.caixa) QTD_CAIXA.set(i.caixa, (QTD_CAIXA.get(i.caixa)||0)+1); });
+
+  comboInput.addEventListener('focus', ()=>abrirCombo(''));
+  comboInput.addEventListener('click', ()=>abrirCombo(comboLista.hidden ? '' : comboInput.value));
+  comboInput.addEventListener('input', ()=>abrirCombo(comboInput.value));
+  comboInput.addEventListener('keydown', teclasCombo);
+  comboInput.addEventListener('blur', ()=>setTimeout(fecharCombo, 120));
+  comboLimpar.addEventListener('click', ()=>{ escolherCaixa(''); comboInput.focus(); });
+  document.addEventListener('click', e=>{ if(!comboRaiz.contains(e.target)) fecharCombo(); });
+}
+
+function opcoesCombo(texto){
+  const t = normalizar(String(texto).trim());
+  return t ? CAIXAS.filter(c => normalizar(c).includes(t)) : CAIXAS.slice();
+}
+
+function abrirCombo(texto){
+  const lista = opcoesCombo(texto);
+  comboAtivo = -1;
+  comboLista.innerHTML = lista.length
+    ? lista.map(c =>
+        '<button type="button" class="combo-op" role="option" data-caixa="'+escapar(c)+'" '+
+        'aria-selected="'+(c===elCaixa.value)+'">'+
+        '<span>'+escapar(c)+'</span><span class="n">'+(QTD_CAIXA.get(c)||0)+'</span></button>').join('')
+    : '<div class="combo-vazio">Nenhuma caixa com esse nome.</div>';
+  comboLista.querySelectorAll('.combo-op').forEach(b=>{
+    b.addEventListener('mousedown', e=>e.preventDefault());
+    b.addEventListener('click', ()=>escolherCaixa(b.dataset.caixa));
+  });
+  comboLista.hidden = false;
+  comboInput.setAttribute('aria-expanded','true');
+}
+
+function fecharCombo(){
+  comboLista.hidden = true;
+  comboAtivo = -1;
+  comboInput.setAttribute('aria-expanded','false');
+  comboInput.value = elCaixa.value;
+}
+
+function escolherCaixa(valor){
+  elCaixa.value = valor;
+  comboInput.value = valor;
+  comboInput.classList.toggle('escolhido', !!valor);
+  comboLimpar.hidden = !valor;
+  fecharCombo();
+  desenhar();
+}
+
+function teclasCombo(e){
+  const ops = comboLista.querySelectorAll('.combo-op');
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+    e.preventDefault();
+    if (comboLista.hidden){ abrirCombo(''); return; }
+    if (!ops.length) return;
+    comboAtivo = e.key === 'ArrowDown'
+      ? (comboAtivo + 1) % ops.length
+      : (comboAtivo - 1 + ops.length) % ops.length;
+    ops.forEach((o,ix)=>o.classList.toggle('ativo', ix===comboAtivo));
+    ops[comboAtivo].scrollIntoView({block:'nearest'});
+  } else if (e.key === 'Enter'){
+    e.preventDefault();
+    if (comboAtivo >= 0 && ops[comboAtivo]) escolherCaixa(ops[comboAtivo].dataset.caixa);
+    else if (ops.length === 1) escolherCaixa(ops[0].dataset.caixa);
+  } else if (e.key === 'Escape'){
+    fecharCombo();
+    comboInput.blur();
+  }
 }
 
 function trocarAba(qual){
